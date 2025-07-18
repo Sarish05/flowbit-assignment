@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: flowbit-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - flowbit-network
+
+  # n8n Workflow Engine  
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: flowbit-n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin@flowbit.com
+      - N8N_BASIC_AUTH_PASSWORD=Password123
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678
+      - GENERIC_TIMEZONE=UTC
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - flowbit-network
+    depends_on:
+      - mongodb
+
+  # Your Backend API
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: flowbit-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - MONGODB_URI=mongodb://admin:password123@mongodb:27017/flowbit?authSource=admin
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - N8N_WEBHOOK_URL=http://flowbit-n8n:5678/webhook/simple-test
+      - WEBHOOK_SECRET=shared-secret-between-n8n-and-backend
+    networks:
+      - flowbit-network
+    depends_on:
+      - mongodb
+      - n8n
+
+  # React Frontend  
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: flowbit-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:3001
+    networks:
+      - flowbit-network
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
+  n8n_data:
+
+networks:
+  flowbit-network:
+    driver: bridge

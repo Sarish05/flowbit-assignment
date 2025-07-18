@@ -1,0 +1,41 @@
+{
+  "logisticsco": [
+    {
+      "name": "Support Tickets",
+      "url": "http://localhost:3001/remoteEntry.js",
+      "route": "/tickets",
+      "icon": "🎫",
+      "description": "Manage customer support tickets and track resolutions"
+    },
+    {
+      "name": "Shipment Tracking",
+      "url": "http://localhost:3003/remoteEntry.js",
+      "route": "/shipments",
+      "icon": "🚚",
+      "description": "Track and manage shipment deliveries"
+    },
+    {
+      "name": "Fleet Management",
+      "url": "http://localhost:3004/remoteEntry.js",
+      "route": "/fleet",
+      "icon": "🚛",
+      "description": "Manage delivery vehicles and drivers"
+    }
+  ],
+  "retailgmbh": [
+    {
+      "name": "Support Tickets", 
+      "url": "http://localhost:3001/remoteEntry.js",
+      "route": "/tickets",
+      "icon": "🎫",
+      "description": "Manage customer support tickets and track resolutions"
+    },
+    {
+      "name": "Product Issues",
+      "url": "http://localhost:3002/remoteEntry.js",
+      "route": "/products",
+      "icon": "📦",
+      "description": "Track and resolve product-related issues"
+    }
+  ]
+}
