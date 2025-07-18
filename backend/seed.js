@@ -6,17 +6,17 @@ const Ticket = require('./models/Ticket');
 
 async function seedDatabase() {
   try {
-    // Connect to MongoDB
+    
     await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log('✅ Connected to MongoDB for seeding');
+    console.log(' Connected to MongoDB for seeding');
 
-    // Clear existing data
+
     await User.deleteMany({});
     await Ticket.deleteMany({});
-    console.log('🧹 Cleared existing data');
+    console.log(' Cleared existing data');
 
     // Create sample tenants and admins
     const password = 'password123';
@@ -118,5 +118,5 @@ async function seedDatabase() {
   }
 }
 
-// Run the seeding
+
 seedDatabase();

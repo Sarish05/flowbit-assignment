@@ -54,31 +54,6 @@ const AdminPanel = () => {
         </p>
       </div>
 
-      {/* Tenant Isolation Demo */}
-      <div style={{ marginBottom: '2rem', padding: '1.5rem', backgroundColor: '#fef3c7', borderRadius: '12px', border: '1px solid #f59e0b' }}>
-        <h3 style={{ marginBottom: '1rem', color: '#92400e' }}>🔒 Tenant Data Isolation Demo</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-          <div>
-            <h4 style={{ color: '#92400e', marginBottom: '0.5rem' }}>✅ What You Can Access</h4>
-            <div style={{ fontSize: '0.875rem', color: '#92400e' }}>
-              <div><strong>Current Tenant:</strong> {getTenantDisplayName(user?.customerId)}</div>
-              <div><strong>Your Role:</strong> {user?.role}</div>
-              <div><strong>Visible Tickets:</strong> {tickets.length} tickets</div>
-              <div><strong>Data Filter:</strong> customerId = "{user?.customerId}"</div>
-            </div>
-          </div>
-          <div>
-            <h4 style={{ color: '#92400e', marginBottom: '0.5rem' }}>❌ What You Cannot Access</h4>
-            <div style={{ fontSize: '0.875rem', color: '#92400e' }}>
-              <div><strong>Other Tenant:</strong> {getTenantDisplayName(otherTenant)}</div>
-              <div><strong>Their Tickets:</strong> Hidden & Inaccessible</div>
-              <div><strong>Security:</strong> JWT middleware enforces isolation</div>
-              <div><strong>Database:</strong> All queries auto-filtered</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
         <div className="ticket-card">
           <h3 style={{ marginBottom: '1rem', color: '#059669' }}>📊 Ticket Statistics</h3>
@@ -167,41 +142,6 @@ const AdminPanel = () => {
             ))}
           </div>
         )}
-      </div>
-
-      <div className="ticket-card">
-        <h3 style={{ marginBottom: '1rem' }}>🎯 Architecture Features</h3>
-        <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-          <div>
-            <h4 style={{ marginBottom: '0.5rem', color: '#1f2937' }}>✅ Security & Isolation</h4>
-            <ul style={{ color: '#6b7280', fontSize: '0.875rem', paddingLeft: '1rem' }}>
-              <li>JWT-based authentication with tenant context</li>
-              <li>Automatic tenant data filtering on all queries</li>
-              <li>Role-based access control (Admin vs User)</li>
-              <li>Protected admin routes with middleware</li>
-              <li>Secure webhook verification</li>
-            </ul>
-          </div>
-          <div>
-            <h4 style={{ marginBottom: '0.5rem', color: '#1f2937' }}>🏗️ Multi-Tenant Architecture</h4>
-            <ul style={{ color: '#6b7280', fontSize: '0.875rem', paddingLeft: '1rem' }}>
-              <li>Dynamic navigation per tenant</li>
-              <li>Tenant-specific screen configurations</li>
-              <li>Isolated data storage with customerId</li>
-              <li>Micro-frontend ready architecture</li>
-              <li>Workflow integration per tenant</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#d1fae5', borderRadius: '8px', border: '1px solid #10b981' }}>
-        <h4 style={{ marginBottom: '0.5rem', color: '#047857' }}>✅ Demo Verification Complete</h4>
-        <p style={{ fontSize: '0.875rem', color: '#047857' }}>
-          <strong>Tenant Isolation Verified:</strong> Admin from {getTenantDisplayName(user?.customerId)} can only access their own tenant's data. 
-          All database queries are automatically filtered by customerId "{user?.customerId}" from the JWT token.
-          Try logging in as {getTenantDisplayName(otherTenant)} admin to see completely different data.
-        </p>
       </div>
     </div>
   )

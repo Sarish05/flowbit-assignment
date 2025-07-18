@@ -28,7 +28,6 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// Compound index for tenant isolation
 userSchema.index({ customerId: 1, email: 1 });
 
 module.exports = mongoose.model('User', userSchema);

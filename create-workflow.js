@@ -8,7 +8,7 @@
 const axios = require('axios');
 
 const N8N_BASE_URL = 'http://localhost:5678';
-const N8N_AUTH = Buffer.from('admin@flowbit.com:password123').toString('base64');
+const N8N_AUTH = Buffer.from('admin:password123').toString('base64');
 
 // Workflow definition
 const workflowDefinition = {
@@ -75,7 +75,7 @@ const workflowDefinition = {
           ]
         }
       },
-      "name": "Tenant Check",
+      "name": "Tenant Router",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [680, 300],
@@ -87,15 +87,19 @@ const workflowDefinition = {
           "string": [
             {
               "name": "status",
-              "value": "={{$json.priority === 'High' ? 'In Progress' : 'Open'}}"
+              "value": "={{$json.priority === 'High' ? 'In Progress' : ($json.priority === 'Medium' ? 'Under Review' : 'Open')}}"
             },
             {
               "name": "workflowData",
-              "value": "LogisticsCo: Auto-processed based on priority"
+              "value": "LogisticsCo Processing: Auto-assigned based on {{$json.priority}} priority. Ticket: {{$json.title}}"
             },
             {
               "name": "tenant",
               "value": "LogisticsCo"
+            },
+            {
+              "name": "processedAt",
+              "value": "={{new Date().toISOString()}}"
             }
           ]
         }
@@ -112,15 +116,19 @@ const workflowDefinition = {
           "string": [
             {
               "name": "status",
-              "value": "In Progress"
+              "value": "={{$json.priority === 'Low' ? 'Open' : 'In Progress'}}"
             },
             {
               "name": "workflowData",
-              "value": "RetailGmbH: Auto-escalated for customer service review"
+              "value": "RetailGmbH Processing: Customer service review initiated for {{$json.priority}} priority ticket: {{$json.title}}"
             },
             {
               "name": "tenant",
               "value": "RetailGmbH"
+            },
+            {
+              "name": "processedAt",
+              "value": "={{new Date().toISOString()}}"
             }
           ]
         }
@@ -133,10 +141,11 @@ const workflowDefinition = {
     },
     {
       "parameters": {
-        "url": "http://flowbit-backend:3001/webhook/ticket-done",
+        "url": "http://flowbit-backend:3001/api/webhooks/ticket-processed",
         "options": {
           "headers": {
-            "X-Webhook-Secret": "={{$json.webhookSecret}}"
+            "X-Webhook-Secret": "={{$json.webhookSecret}}",
+            "Content-Type": "application/json"
           }
         },
         "sendBody": true,
@@ -153,6 +162,14 @@ const workflowDefinition = {
             {
               "name": "workflowData",
               "value": "={{$json.workflowData}}"
+            },
+            {
+              "name": "processedAt",
+              "value": "={{$json.processedAt}}"
+            },
+            {
+              "name": "tenant",
+              "value": "={{$json.tenant}}"
             }
           ]
         }
@@ -162,6 +179,23 @@ const workflowDefinition = {
       "typeVersion": 1,
       "position": [1120, 300],
       "id": "send-callback"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "success": true,
+          "message": "Ticket processed successfully",
+          "ticketId": "={{$json.ticketId}}",
+          "status": "={{$json.status}}",
+          "tenant": "={{$json.tenant}}"
+        }
+      },
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1340, 300],
+      "id": "success-response"
     }
   ],
   "connections": {
@@ -169,25 +203,25 @@ const workflowDefinition = {
       "main": [
         [
           {
-            "node": "Extract Data",
+            "node": "Extract Ticket Data",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Extract Data": {
+    "Extract Ticket Data": {
       "main": [
         [
           {
-            "node": "Tenant Check",
+            "node": "Tenant Router",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Tenant Check": {
+    "Tenant Router": {
       "main": [
         [
           {
@@ -226,33 +260,89 @@ const workflowDefinition = {
           }
         ]
       ]
+    },
+    "Send Callback": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
-  "settings": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
   "id": "flowbit-ticket-workflow"
 };
 
 async function createWorkflow() {
   try {
-    console.log('🔄 Creating FlowBit workflow in n8n...');
+    console.log(' FlowBit Workflow Setup Starting...');
+    console.log(' Connecting to n8n at:', N8N_BASE_URL);
     
-    const response = await axios.post(`${N8N_BASE_URL}/api/v1/workflows`, workflowDefinition, {
-      headers: {
-        'Authorization': `Basic ${N8N_AUTH}`,
-        'Content-Type': 'application/json'
+    // First, check if workflow already exists
+    try {
+      const existingWorkflows = await axios.get(`${N8N_BASE_URL}/api/v1/workflows`, {
+        headers: {
+          'Authorization': `Basic ${N8N_AUTH}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const existingWorkflow = existingWorkflows.data.find(w => w.name === workflowDefinition.name);
+      if (existingWorkflow) {
+        console.log('  Workflow already exists, updating...');
+        const response = await axios.put(
+          `${N8N_BASE_URL}/api/v1/workflows/${existingWorkflow.id}`, 
+          workflowDefinition,
+          {
+            headers: {
+              'Authorization': `Basic ${N8N_AUTH}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        console.log('Workflow updated successfully!');
+        console.log('Workflow ID:', response.data.id);
+      } else {
+        const response = await axios.post(`${N8N_BASE_URL}/api/v1/workflows`, workflowDefinition, {
+          headers: {
+            'Authorization': `Basic ${N8N_AUTH}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('New workflow created successfully!');
+        console.log('Workflow ID:', response.data.id);
       }
-    });
+    } catch (listError) {
+      // If we can't list workflows, try to create a new one
+      const response = await axios.post(`${N8N_BASE_URL}/api/v1/workflows`, workflowDefinition, {
+        headers: {
+          'Authorization': `Basic ${N8N_AUTH}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('Workflow created successfully!');
+      console.log('Workflow ID:', response.data.id);
+    }
     
-    console.log('✅ Workflow created successfully!');
-    console.log('📋 Workflow ID:', response.data.id);
-    console.log('🔗 Webhook URL:', `${N8N_BASE_URL}/webhook/flowbit-ticket`);
+    console.log('Webhook URL:', `${N8N_BASE_URL}/webhook/flowbit-ticket`);
+    console.log('Webhook Secret:', WEBHOOK_SECRET);
+    console.log('Callback Endpoint: http://flowbit-backend:3001/api/webhooks/ticket-processed');
+    console.log('');
+    
     
   } catch (error) {
-    console.error('❌ Failed to create workflow:', error.response?.data || error.message);
-    console.log('💡 Try creating the workflow manually in the n8n UI at http://localhost:5678');
+    console.error(' Failed to create/update workflow:', error.response?.data || error.message);
+    
   }
 }
+
 
 // Run the setup
 createWorkflow();

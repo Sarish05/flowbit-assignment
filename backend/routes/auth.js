@@ -11,13 +11,13 @@ router.post('/register', async (req, res) => {
   try {
     const { email, password, customerId, role, firstName, lastName } = req.body;
 
-    // Check if user exists
+   
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    // Hash password
+   
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -33,7 +33,6 @@ router.post('/register', async (req, res) => {
 
     await user.save();
 
-    // Generate JWT
     const token = jwt.sign(
       { 
         userId: user._id,
@@ -67,7 +66,7 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
+   
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ error: 'Invalid credentials' });
@@ -79,7 +78,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
-    // Generate JWT
+   
     const token = jwt.sign(
       { 
         userId: user._id,
@@ -132,8 +131,7 @@ router.get('/me/screens', authenticateToken, async (req, res) => {
     // Get screens for current tenant
     let screens = registry[customerId] || [];
 
-    // Don't add admin screens here - let frontend handle it
-    // This prevents duplication
+
     
     res.json({ screens });
   } catch (error) {

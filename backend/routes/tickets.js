@@ -81,10 +81,9 @@ router.post('/', authenticateToken, async (req, res) => {
 
     await ticket.save();
 
-    // Populate user data for response
+
     await ticket.populate('createdBy', 'firstName lastName email');
 
-    // Trigger n8n workflow (non-blocking)
     try {
       if (process.env.N8N_WEBHOOK_URL) {
         const workflowPayload = {
@@ -98,7 +97,6 @@ router.post('/', authenticateToken, async (req, res) => {
           webhookSecret: process.env.WEBHOOK_SECRET
         };
 
-        // Fire and forget - don't wait for n8n response
         axios.post(process.env.N8N_WEBHOOK_URL, workflowPayload, {
           timeout: 5000,
           headers: {
@@ -110,7 +108,7 @@ router.post('/', authenticateToken, async (req, res) => {
           }
         }).then(() => {
           console.log(`Workflow triggered for ticket ${ticket._id}`);
-          // Update workflow status
+         
           Ticket.findByIdAndUpdate(ticket._id, { 
             workflowStatus: 'Processing' 
           }).exec();
@@ -137,7 +135,6 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
     const { customerId } = req.user;
     const updates = req.body;
 
-    // Remove fields that shouldn't be updated directly
     delete updates.customerId;
     delete updates.createdBy;
     delete updates._id;

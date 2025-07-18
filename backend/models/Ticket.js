@@ -49,7 +49,7 @@ const ticketSchema = new mongoose.Schema({
   }
 });
 
-// Compound index for tenant isolation and efficient queries
+
 ticketSchema.index({ customerId: 1, status: 1 });
 ticketSchema.index({ customerId: 1, createdAt: -1 });
 

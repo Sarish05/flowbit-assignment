@@ -205,23 +205,10 @@ const DashboardHome = () => {
           </div>
         )}
 
-        <div className="ticket-card">
-          <h3 style={{ marginBottom: '1rem' }}>� Analytics</h3>
-          <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
-            View performance metrics and reports for your organization
-          </p>
-          <div className="tenant-badge">Coming Soon</div>
-        </div>
+       
       </div>
 
-      <div style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#f3f4f6', borderRadius: '8px' }}>
-        <h4 style={{ marginBottom: '0.5rem' }}>Tenant Information</h4>
-        <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-          <div><strong>Tenant:</strong> {getTenantDisplayName(user?.customerId)}</div>
-          <div><strong>Role:</strong> {user?.role}</div>
-          <div><strong>User ID:</strong> {user?.id}</div>
-        </div>
-      </div>
+      
     </div>
   )
 }

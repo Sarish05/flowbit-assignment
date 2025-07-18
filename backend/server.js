@@ -9,22 +9,21 @@ const webhookRoutes = require('./routes/webhooks');
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Request logging
+
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
 
-// Routes
+
 app.use('/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/webhook', webhookRoutes);
 
-// Admin routes (example of route protection)
+
 app.get('/admin/stats', require('./middleware/auth').authenticateToken, require('./middleware/auth').requireAdmin, async (req, res) => {
   try {
     const Ticket = require('./models/Ticket');
@@ -59,12 +58,12 @@ app.get('/health', (req, res) => {
   });
 });
 
-// 404 handler
+
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Error handler
+
 app.use((error, req, res, next) => {
   console.error('Server error:', error);
   res.status(500).json({ error: 'Internal server error' });

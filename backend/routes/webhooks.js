@@ -11,20 +11,19 @@ router.post('/ticket-done', verifyWebhookSecret, async (req, res) => {
 
     console.log(`Webhook received for ticket ${ticketId}:`, req.body);
 
-    // Find and update ticket
     const ticket = await Ticket.findById(ticketId);
     
     if (!ticket) {
       return res.status(404).json({ error: 'Ticket not found' });
     }
 
-    // Update ticket based on workflow response
+
     const updates = {
       workflowStatus: 'Completed',
       updatedAt: new Date()
     };
 
-    // Update status if provided by workflow
+    
     if (status && ['Open', 'In Progress', 'Resolved', 'Closed'].includes(status)) {
       updates.status = status;
     } else {
@@ -32,7 +31,7 @@ router.post('/ticket-done', verifyWebhookSecret, async (req, res) => {
       updates.status = 'In Progress';
     }
 
-    // Store any additional workflow data
+  
     if (workflowData) {
       updates.workflowData = workflowData;
     }
@@ -49,8 +48,7 @@ router.post('/ticket-done', verifyWebhookSecret, async (req, res) => {
       workflowStatus: updatedTicket.workflowStatus
     });
 
-    // In a real app, you'd broadcast this update via WebSocket
-    // For now, we'll just log it
+
     console.log(`Broadcasting update for ticket ${ticketId} to tenant ${updatedTicket.customerId}`);
 
     res.json({
