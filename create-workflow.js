@@ -8,7 +8,7 @@
 const axios = require('axios');
 
 const N8N_BASE_URL = 'http://localhost:5678';
-const N8N_AUTH = Buffer.from('admin:password123').toString('base64');
+const N8N_AUTH = Buffer.from('admin@flowbit.com:password123').toString('base64');
 
 // Workflow definition
 const workflowDefinition = {

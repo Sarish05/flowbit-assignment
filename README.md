@@ -1,4 +1,4 @@
-﻿#  FlowBit - Multi-Tenant Workflow Platform
+# 🚀 FlowBit - Multi-Tenant Workflow Platform
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
@@ -7,26 +7,26 @@
 
 A production-ready MERN stack application demonstrating **multi-tenant architecture** with **n8n workflow integration**. Built for the FlowBit Technical Challenge.
 
-##  **Key Features**
+## 🎯 **Key Features**
 
-### Core Requirements 
-- ** JWT Authentication** - Email/password login with bcrypt + jsonwebtoken
-- ** Multi-Tenant Data Isolation** - Complete tenant separation with customerId
-- ** Role-Based Access Control** - Admin/User roles with middleware protection
-- ** Dynamic Micro-Frontend Loading** - Tenant-specific screen registry
-- ** n8n Workflow Integration** - Automated ticket processing with webhooks
-- ** Containerized Development** - Full Docker setup with self-configuration
+### Core Requirements ✅
+- **🔐 JWT Authentication** - Email/password login with bcrypt + jsonwebtoken
+- **🏢 Multi-Tenant Data Isolation** - Complete tenant separation with customerId
+- **👥 Role-Based Access Control** - Admin/User roles with middleware protection
+- **🎯 Dynamic Micro-Frontend Loading** - Tenant-specific screen registry
+- **🔄 n8n Workflow Integration** - Automated ticket processing with webhooks
+- **🐳 Containerized Development** - Full Docker setup with self-configuration
 
 ### Architecture Highlights
-- **Tenant Isolation**: Every MongoDB query includes customerId filtering
-- **Workflow Round-Trip**: FlowBit  n8n  FlowBit with status updates
+- **Tenant Isolation**: Every MongoDB query includes `customerId` filtering
+- **Workflow Round-Trip**: FlowBit → n8n → FlowBit with status updates
 - **Real-Time Updates**: UI polling for workflow status changes
 - **Security**: JWT tokens, webhook secrets, tenant-aware middleware
 
-##  **Quick Start**
+## 🚀 **Quick Start**
 
 ### Option 1: Docker (Recommended)
-`ash
+```bash
 # Clone and start everything
 git clone https://github.com/Sarish05/flowbit-assignment.git
 cd flowbit-assignment
@@ -36,10 +36,10 @@ docker-compose up -d
 # Frontend: http://localhost:3000
 # Backend: http://localhost:3001
 # n8n: http://localhost:5678
-`
+```
 
 ### Option 2: Local Development
-`ash
+```bash
 # Backend setup
 cd backend
 npm install
@@ -50,34 +50,48 @@ npm start       # Starts on port 3001
 cd frontend
 npm install
 npm run dev     # Starts on port 3000
-`
+```
 
-##  **Demo Credentials**
+## 👥 **Demo Credentials**
 
 ### LogisticsCo Tenant
-- **Admin**: dmin@logisticsco.com / password123
-- **User**: user@logisticsco.com / password123
+- **Admin**: `admin@logisticsco.com` / `password123`
+- **User**: `user@logisticsco.com` / `password123`
 
 ### RetailGmbH Tenant
-- **Admin**: dmin@retailgmbh.com / password123
-- **User**: user@retailgmbh.com / password123
+- **Admin**: `admin@retailgmbh.com` / `password123`
+- **User**: `user@retailgmbh.com` / `password123`
 
-##  **Assignment Compliance**
+## 📁 **Project Structure**
 
-### Core Requirements Met:
--  **R1**: JWT Auth with customerId and role
--  **R2**: Tenant data isolation 
--  **R3**: Hard-coded registry with tenant mappings
--  **R4**: Dynamic React shell with lazy loading
--  **R5**: n8n workflow ping with callback
--  **R6**: Full Docker containerization
+```
+flowbit-assignment/
+├── backend/
+│   ├── models/           # MongoDB schemas with tenant isolation
+│   ├── routes/           # API endpoints with RBAC
+│   ├── middleware/       # JWT auth & tenant middleware
+│   ├── registry.json     # Tenant-screen mappings
+│   └── seed.js          # Sample data creation
+├── frontend/
+│   ├── src/
+│   │   ├── components/   # React components
+│   │   ├── context/      # Auth context
+│   │   └── api/         # API configuration
+│   └── public/
+├── docker-compose.yml    # Full stack containerization
+└── README.md            # This file
+```
 
-##  **Developer**
+## 👨‍💻 **Developer**
 
 **Sarish Sunil Sonawane**
 - GitHub: [@Sarish05](https://github.com/Sarish05)
-- Email: [Contact for FlowBit Assignment]
+- Email: [sarishsonawane2005@gmail.com](sarishsonawane2005@gmail.com)
+
+## 📄 **License**
+
+This project is created for the FlowBit Technical Challenge.
 
 ---
 
-** Ready for Demo!** This implementation demonstrates a production-ready multi-tenant platform with complete workflow integration!
+**🎉 Ready for Demo!** This implementation demonstrates a production-ready multi-tenant platform with complete workflow integration!
