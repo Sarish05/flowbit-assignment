@@ -88,10 +88,4 @@ flowbit-assignment/
 - GitHub: [@Sarish05](https://github.com/Sarish05)
 - Email: [sarishsonawane2005@gmail.com](sarishsonawane2005@gmail.com)
 
-## 📄 **License**
-
-This project is created for the FlowBit Technical Challenge.
-
 ---
-
-**🎉 Ready for Demo!** This implementation demonstrates a production-ready multi-tenant platform with complete workflow integration!
