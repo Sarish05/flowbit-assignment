@@ -101,3 +101,7 @@ temp/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Project-specific files to exclude
+DEMO_SCRIPT.md
+IMPLEMENTATION_SUMMARY.md
